@@ -14,4 +14,4 @@ struct DataStruct {
 std::ostream& operator<<(std::ostream& out, const DataStruct& data);
 std::istream& operator>>(std::istream& in, DataStruct& data);
 
-#endif#pragma once
+#endif
