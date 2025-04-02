@@ -2,7 +2,6 @@
 #include "StreamGuard.h"
 #include <sstream>
 #include <iomanip>
-#include <stdexcept>
 
 bool parseULLLit(const std::string& str, unsigned long long& value) {
     size_t suffix_pos = str.find("ull");

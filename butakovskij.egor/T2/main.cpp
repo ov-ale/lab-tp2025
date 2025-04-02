@@ -1,7 +1,6 @@
 // 4 Вариант
 
-#include "DataStruct.cpp"
-#include "StreamGuard.cpp"
+#include "DataStruct.h"
 #include <vector>
 #include <algorithm>
 #include <iterator>
