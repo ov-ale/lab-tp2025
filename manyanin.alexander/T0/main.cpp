@@ -2,6 +2,6 @@
 
 int main() 
 {
-    std::cout << "manyanin.alexander" << "\n";
+    std::cout << "manyanin.alexander" << std::endl;
     return 0;
 }
