@@ -52,14 +52,15 @@ bool parseULLOct(const std::string& str, unsigned long long& value) {
 }
 
 std::istream& operator>>(std::istream& is, DataStruct& ds) {
-    static bool foundFirstValid = false; // Флаг, что нашли первую валидную строку
+    static int minGoodRecords = 0;
     std::string line;
 
     while(std::getline(is, line)) {
         size_t start = line.find("(:");
         size_t end = line.find(":)");
+
         if(start == std::string::npos || end == std::string::npos) {
-            if(foundFirstValid) {
+            if(minGoodRecords >= 2) {
                 is.setstate(std::ios::failbit);
                 return is;
             }
@@ -98,20 +99,18 @@ std::istream& operator>>(std::istream& is, DataStruct& ds) {
         }
 
         if(hasKey1 && hasKey2 && hasKey3) {
-            if(!foundFirstValid) {
-                foundFirstValid = true;
-                return is;
-            }
-            // Если уже нашли первую валидную, продолжаем как обычно
+            if(minGoodRecords < 2) minGoodRecords++;
             return is;
         }
-        else if(foundFirstValid) {
+        else if(minGoodRecords >= 2) {
             is.setstate(std::ios::failbit);
             return is;
         }
     }
 
-    is.setstate(std::ios::failbit);
+    if(minGoodRecords < 2) {
+        is.setstate(std::ios::failbit);
+    }
     return is;
 }
 
