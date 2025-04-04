@@ -52,67 +52,66 @@ bool parseULLOct(const std::string& str, unsigned long long& value) {
 }
 
 std::istream& operator>>(std::istream& is, DataStruct& ds) {
+    static bool foundFirstValid = false; // Флаг, что нашли первую валидную строку
     std::string line;
-    if(!std::getline(is, line)) {
-        return is;
-    }
 
-    size_t start = line.find("(:");
-    size_t end = line.find(":)");
-    if(start == std::string::npos || end == std::string::npos) {
-        is.setstate(std::ios::failbit);
-        return is;
-    }
-
-    std::string content = line.substr(start + 2, end - start - 2);
-    std::istringstream iss(content);
-    std::string part;
-    bool hasKey1 = false;
-    bool hasKey2 = false;
-    bool hasKey3 = false;
-
-
-    while(std::getline(iss, part, ':')) {
-        std::istringstream part_ss(part);
-        std::string key;
-        part_ss >> key;
-
-        if(key == "key1") {
-            std::string val;
-            part_ss >> val;
-            if(!parseULLLit(val, ds.key1)) {
+    while(std::getline(is, line)) {
+        size_t start = line.find("(:");
+        size_t end = line.find(":)");
+        if(start == std::string::npos || end == std::string::npos) {
+            if(foundFirstValid) {
                 is.setstate(std::ios::failbit);
                 return is;
             }
-            hasKey1 = true;
+            continue;
         }
 
-        else if(key == "key2") {
-            std::string val;
-            part_ss >> val;
-            if(!parseULLOct(val, ds.key2)) {
-                is.setstate(std::ios::failbit);
-                return is;
+        std::string content = line.substr(start + 2, end - start - 2);
+        std::istringstream iss(content);
+        std::string part;
+        bool hasKey1 = false, hasKey2 = false, hasKey3 = false;
+
+        while(std::getline(iss, part, ':')) {
+            std::istringstream part_ss(part);
+            std::string key;
+            part_ss >> key;
+
+            if(key == "key1") {
+                std::string val;
+                part_ss >> val;
+                if(!parseULLLit(val, ds.key1)) break;
+                hasKey1 = true;
             }
-            hasKey2 = true;
+            else if(key == "key2") {
+                std::string val;
+                part_ss >> val;
+                if(!parseULLOct(val, ds.key2)) break;
+                hasKey2 = true;
+            }
+            else if(key == "key3") {
+                part_ss >> std::ws;
+                if(part_ss.peek() != '"') break;
+                part_ss.get();
+                std::getline(part_ss, ds.key3, '"');
+                hasKey3 = true;
+            }
         }
 
-        else if(key == "key3") {
-            part_ss >> std::ws;
-            if(part_ss.peek() != '"') {
-                is.setstate(std::ios::failbit);
+        if(hasKey1 && hasKey2 && hasKey3) {
+            if(!foundFirstValid) {
+                foundFirstValid = true;
                 return is;
             }
-            part_ss.get();
-            std::getline(part_ss, ds.key3, '"');
-            hasKey3 = true;
+            // Если уже нашли первую валидную, продолжаем как обычно
+            return is;
+        }
+        else if(foundFirstValid) {
+            is.setstate(std::ios::failbit);
+            return is;
         }
     }
 
-    if(!hasKey1 || !hasKey2 || !hasKey3) {
-        is.setstate(std::ios::failbit);
-        return is;
-    }
+    is.setstate(std::ios::failbit);
     return is;
 }
 
