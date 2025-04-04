@@ -52,18 +52,11 @@ bool parseULLOct(const std::string& str, unsigned long long& value) {
 }
 
 std::istream& operator>>(std::istream& is, DataStruct& ds) {
-    static int minGoodRecords = 0;
     std::string line;
-
-    while(std::getline(is, line)) {
+    while (std::getline(is, line)) {
         size_t start = line.find("(:");
         size_t end = line.find(":)");
-
-        if(start == std::string::npos || end == std::string::npos) {
-            if(minGoodRecords >= 2) {
-                is.setstate(std::ios::failbit);
-                return is;
-            }
+        if (start == std::string::npos || end == std::string::npos) {
             continue;
         }
 
@@ -72,48 +65,40 @@ std::istream& operator>>(std::istream& is, DataStruct& ds) {
         std::string part;
         bool hasKey1 = false, hasKey2 = false, hasKey3 = false;
 
-        while(std::getline(iss, part, ':')) {
+        while (std::getline(iss, part, ':')) {
             std::istringstream part_ss(part);
             std::string key;
             part_ss >> key;
 
-            if(key == "key1") {
+            if (key == "key1") {
                 std::string val;
                 part_ss >> val;
-                if(!parseULLLit(val, ds.key1)) break;
+                if (!parseULLLit(val, ds.key1)) break;
                 hasKey1 = true;
             }
-            else if(key == "key2") {
+            else if (key == "key2") {
                 std::string val;
                 part_ss >> val;
-                if(!parseULLOct(val, ds.key2)) break;
+                if (!parseULLOct(val, ds.key2)) break;
                 hasKey2 = true;
             }
-            else if(key == "key3") {
+            else if (key == "key3") {
                 part_ss >> std::ws;
-                if(part_ss.peek() != '"') break;
+                if (part_ss.peek() != '"') break;
                 part_ss.get();
                 std::getline(part_ss, ds.key3, '"');
                 hasKey3 = true;
             }
         }
 
-        if(hasKey1 && hasKey2 && hasKey3) {
-            if(minGoodRecords < 2) minGoodRecords++;
-            return is;
-        }
-        else if(minGoodRecords >= 2) {
-            is.setstate(std::ios::failbit);
+        if (hasKey1 && hasKey2 && hasKey3) {
             return is;
         }
     }
 
-    if(minGoodRecords < 2) {
-        is.setstate(std::ios::failbit);
-    }
+    is.setstate(std::ios::eofbit);
     return is;
 }
-
 std::ostream& operator<<(std::ostream& os, const DataStruct& ds) {
     StreamGuard guard(os);
 
