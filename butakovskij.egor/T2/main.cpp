@@ -2,9 +2,9 @@
 
 #include "DataStruct.h"
 #include <vector>
-#include <algorithm>
 #include <iterator>
 #include <iostream>
+#include <algorithm>
 
 int main() {
     std::vector<DataStruct> data;
