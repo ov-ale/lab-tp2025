@@ -4,8 +4,8 @@ StreamGuard::StreamGuard(std::ios& stream) :
     stream_{stream},
     width_{stream.width()},
     fill_{stream.fill()},
-    flags_{stream.flags()},
-    precision_{stream.precision()}
+    precision_{stream.precision()},
+    flags_{stream.flags()}
 {}
 
 StreamGuard::~StreamGuard() {
