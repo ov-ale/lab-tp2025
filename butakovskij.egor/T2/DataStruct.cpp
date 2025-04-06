@@ -45,25 +45,28 @@ std::istream& operator>>(std::istream& is, DelimiterOr&& delimiterOr) {
 
 }
 
-struct DoubleDelimiterOr {
-    char expectedFirst[2];
-    char expectedSecond[2];
+struct TripleDelimiterOr {
+    char expectedFirst[3];
+    char expectedSecond[3];
 };
 
-std::istream& operator>>(std::istream& is, DoubleDelimiterOr&& doubleDelimiterOr) {
+std::istream& operator>>(std::istream& is, TripleDelimiterOr&& tripleDelimiterOr) {
     std::istream::sentry sentry(is);
     if (!sentry) {
         return is;
     }
 
-    char expected[2];
-    is >> expected[0] >> expected[1];
+    char expected[3];
+    is >> expected[0] >> expected[1] >> expected[2];
 
     if (is &&
-        (expected[0] != doubleDelimiterOr.expectedFirst[0] ||
-            expected[1] != doubleDelimiterOr.expectedFirst[1]) &&
-        (expected[0] != doubleDelimiterOr.expectedSecond[0] ||
-            expected[1] != doubleDelimiterOr.expectedSecond[1])) {
+        (expected[0] != tripleDelimiterOr.expectedFirst[0] ||
+            expected[1] != tripleDelimiterOr.expectedFirst[1] ||
+            expected[2] != tripleDelimiterOr.expectedFirst[2]) &&
+            (expected[0] != tripleDelimiterOr.expectedSecond[0] ||
+            expected[1] != tripleDelimiterOr.expectedSecond[1] ||
+            expected[2] != tripleDelimiterOr.expectedSecond[2])) {
+
                 is.setstate(std::ios::failbit);
         }
     return is;
@@ -78,7 +81,7 @@ std::istream& operator>>(std::istream& is, LitULL&& ullLit) {
     if (!sentry) {
         return is;
     }
-    return is >> ullLit.value >> DelimiterOr{'u', 'U'} >> DoubleDelimiterOr{{'l', 'l'}, {'L', 'L'}};
+    return is >> ullLit.value >> TripleDelimiterOr{{'u', 'l', 'l'}, {'U', 'L', 'L'}};
 }
 
 struct OctULL {
@@ -92,15 +95,15 @@ std::istream& operator>>(std::istream& is, OctULL&& octULL) {
     }
 
     char zero;
-
-    is >> zero;
-
-    if(is && zero != '0') {
+    if(!(is >> zero) || zero != '0') {
         is.setstate(std::ios::failbit);
         return is;
     }
     StreamGuard guard(is);
-    return is >> std::oct >> octULL.value;
+    if(!(is >> std::oct >> octULL.value)) {
+        is.setstate(std::ios::failbit);
+    }
+    return is;
 }
 
 struct String {
