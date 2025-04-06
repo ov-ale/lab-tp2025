@@ -1,0 +1,7 @@
+(:key1 4e-32:key2 0b01101:key3 "data":)
+(:key1 5.23e-32:key2 0b1011:key3 "qwehsd":)
+(:key1 1.24e-32:key2 0b011001:key3 "aaaa":)
+(:key1 12.24e-32:key2 0b011111101:key3 "dbsdbs":)
+(:key1 32d:key2 0b011111101:key3 "dbsdbs":)
+(:key1 4e-32:key2 wqg01:key3 "":)
+(:key2 0b011111101:key1 4e-32:key3 "dbsdbs":)
