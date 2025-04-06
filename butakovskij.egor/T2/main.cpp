@@ -7,13 +7,14 @@
 #include <iostream>
 
 int main() {
-    std::vector<DataStruct> data;
+    using DataStructs = std::vector<DataStruct>;
 
+    DataStructs dataStructs{};
     while(!std::cin.eof()) {
         std::copy(
-            std::istream_iterator<DataStruct>(std::cin),
-            std::istream_iterator<DataStruct>(),
-            std::back_inserter(data)
+            std::istream_iterator<DataStruct>{std::cin},
+            std::istream_iterator<DataStruct>{},
+            std::back_inserter(dataStructs)
         );
         if (!std::cin) {
             std::cin.clear();
@@ -22,8 +23,8 @@ int main() {
     }
 
     std::sort(
-        data.begin(),
-        data.end(),
+        std::begin(dataStructs),
+        std::end(dataStructs),
         [](const DataStruct& a, const DataStruct& b) {
             if (a.key1 != b.key1) {
                 return a.key1 < b.key1;
@@ -36,8 +37,8 @@ int main() {
 
 
     std::copy(
-        std::begin(data),
-        std::end(data),
+        std::begin(dataStructs),
+        std::end(dataStructs),
         std::ostream_iterator<DataStruct>(std::cout, "\n")
     );
     return 0;
