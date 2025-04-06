@@ -5,17 +5,15 @@
 
 class StreamGuard {
 public:
-    explicit StreamGuard(std::ostream& os);
+    StreamGuard(std::ios &stream);
     ~StreamGuard();
 
-    StreamGuard(const StreamGuard&) = delete;
-    StreamGuard& operator=(const StreamGuard&) = delete;
-
 private:
-    std::ostream& stream;
-    std::ios::fmtflags flags;
-    char fill;
-    std::streamsize precision;
+    std::ios& stream_;
+    std::streamsize width_;
+    char fill_;
+    std::streamsize precision_;
+    std::ios::fmtflags flags_;
 };
 
 #endif

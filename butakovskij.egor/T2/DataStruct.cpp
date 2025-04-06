@@ -1,112 +1,174 @@
+// ULL LIT && ULL OCT
 #include "DataStruct.h"
 #include "StreamGuard.h"
-#include <sstream>
-#include <iomanip>
-#include <stdexcept>
 
-bool parseULLLit(const std::string& str, unsigned long long& value) {
-    size_t suffix_pos = str.find("ull");
-    if (suffix_pos == std::string::npos) {
-        suffix_pos = str.find("ULL");
-        if (suffix_pos == std::string::npos) {
-            return false;
-        }
-    }
-    try {
-        value = std::stoull(str.substr(0, suffix_pos));
-        return true;
-    } catch (...) {
-        return false;
-    }
-}
+#include <iostream>
+#include <string>
 
-bool parseULLOct(const std::string& str, unsigned long long& value) {
-    if (str.empty() || str[0] != '0') {
-        return false;
-    }
-    for (char c : str) {
-        if (c < '0' || c > '7') {
-            return false;
-        }
-    }
-    try {
-        value = std::stoull(str, nullptr, 8);
-        return true;
-    } catch (...) {
-        return false;
-    }
-}
+struct Delimiter {
+    char expected;
+};
 
-std::istream& operator>>(std::istream& is, DataStruct& ds) {
-    std::string line;
-    if (!std::getline(is, line)) {
+std::istream& operator>>(std::istream& is, Delimiter&& delimeter) {
+    std::istream::sentry sentry(is);
+    if (!sentry) {
         return is;
     }
-
-    size_t start = line.find("(:");
-    size_t end = line.find(":)");
-    if (start == std::string::npos || end == std::string::npos) {
-        is.setstate(std::ios::failbit);
-        return is;
-    }
-
-    std::string content = line.substr(start + 2, end - start - 2);
-    std::istringstream iss(content);
-    std::string part;
-    bool has_key1 = false, has_key2 = false, has_key3 = false;
-
-    while (std::getline(iss, part, ':')) {
-        std::istringstream part_ss(part);
-        std::string key;
-        part_ss >> key;
-
-        if (key == "key1") {
-            std::string val;
-            part_ss >> val;
-            if (!parseULLLit(val, ds.key1)) {
-                is.setstate(std::ios::failbit);
-                return is;
-            }
-            has_key1 = true;
-        } else if (key == "key2") {
-            std::string val;
-            part_ss >> val;
-            if (!parseULLOct(val, ds.key2)) {
-                is.setstate(std::ios::failbit);
-                return is;
-            }
-            has_key2 = true;
-        } else if (key == "key3") {
-            part_ss >> std::ws;
-            if (part_ss.peek() != '"') {
-                is.setstate(std::ios::failbit);
-                return is;
-            }
-            part_ss.get();
-            std::getline(part_ss, ds.key3, '"');
-            has_key3 = true;
-        }
-    }
-
-    if (!has_key1 || !has_key2 || !has_key3) {
+    char exp;
+    is >> exp;
+    if (is &&  (exp != delimeter.expected)) {
         is.setstate(std::ios::failbit);
     }
     return is;
 }
 
-std::ostream& operator<<(std::ostream& os, const DataStruct& ds) {
-    StreamGuard guard(os);
-    os << "(:key1 " << ds.key1 << "ull:key2 ";
-    if (ds.key2 != 0) {
-        os << '0';
+struct DelimiterOr {
+    char expectedFirst;
+    char expectedSecond;
+};
+
+std::istream& operator>>(std::istream& is, DelimiterOr&& delimiterOr) {
+    std::istream::sentry sentry(is);
+    if (!sentry) {
+        return is;
     }
-    os << std::oct << ds.key2 << std::dec;
-    os << ":key3 \"" << ds.key3 << "\":)";
-    return os;
+
+    char exp;
+    is >> exp;
+
+    if(is &&
+        (exp != delimiterOr.expectedFirst ||
+             exp != delimiterOr.expectedSecond)) {
+                is.setstate(std::ios::failbit);
+        }
+    return is;
+
 }
 
-bool compare(const DataStruct& a, const DataStruct& b) {
-    if (a.key1 != b.key1) return a.key1 < b.key1;
-    if (a.key2 != b.key2) return a.key2 < b.key2;
-    return a.key3.size() < b.key3.size();
+struct DoubleDelimiterOr {
+    char expectedFirst[2];
+    char expectedSecond[2];
+};
+
+std::istream& operator>>(std::istream& is, DoubleDelimiterOr&& doubleDelimiterOr) {
+    std::istream::sentry sentry(is);
+    if (!sentry) {
+        return is;
+    }
+
+    char expected[2];
+    is >> expected[0] >> expected[1];
+
+    if (is &&
+        (expected[0] != doubleDelimiterOr.expectedFirst[0] ||
+            expected[1] != doubleDelimiterOr.expectedFirst[1]) &&
+        (expected[0] != doubleDelimiterOr.expectedSecond[0] ||
+            expected[1] != doubleDelimiterOr.expectedSecond[1])) {
+                is.setstate(std::ios::failbit);
+        }
+    return is;
+}
+
+struct LitULL {
+    unsigned long long& value;
+};
+
+std::istream& operator>>(std::istream& is, LitULL&& ullLit) {
+    std::istream::sentry sentry(is);
+    if (!sentry) {
+        return is;
+    }
+    return is >> ullLit.value >> DelimiterOr{'u', 'U'} >> DoubleDelimiterOr{{'l', 'l'}, {'L', 'L'}};
+}
+
+struct OctULL {
+    unsigned long long& value;
+};
+
+std::istream& operator>>(std::istream& is, OctULL&& octULL) {
+    std::istream::sentry sentry(is);
+    if (!sentry) {
+        return is;
+    }
+
+    char zero;
+
+    is >> zero;
+
+    if(is && zero != '0') {
+        is.setstate(std::ios::failbit);
+        return is;
+    }
+    StreamGuard guard(is);
+    return is >> std::oct >> octULL.value;
+}
+
+struct String {
+    std::string& value;
+};
+
+std::istream& operator>>(std::istream& is, String&& string) {
+    std::istream::sentry sentry(is);
+    if (!sentry) {
+        return is;
+    }
+    return std::getline(is >> Delimiter {'"'}, string.value, '"');
+}
+
+const size_t NUMBER_OF_KEYS = 3;
+
+std::istream& operator>>(std::istream& is, DataStruct& ds) {
+    std::istream::sentry sentry(is);
+    if (!sentry) {
+        return is;
+    }
+    DataStruct result;
+    bool key1, key2, key3;
+
+    is >> Delimiter{'('} >> Delimiter{':'};
+    for (size_t i = 0; i < NUMBER_OF_KEYS; i++) {
+        std::string key;
+        is >> key;
+        if (!is) {
+            break;
+        }
+
+        if (key == "key1") {
+            is >> LitULL{result.key1};
+            key1 = true;
+        }
+        else if (key == "key2") {
+            is >> OctULL{result.key2};
+            key2 = true;
+        }
+        else if (key == "key3") {
+            is >> String{result.key3};
+            key3 = true;
+        }
+        else {
+            is.setstate(std::ios::failbit);
+            break;
+        }
+        is >> Delimiter{':'};
+    }
+    is >> Delimiter{')'};
+
+    if (is && key1 && key2 && key3) {
+        ds = std::move(result);
+    }
+    return is;
+}
+
+std::ostream& operator<<(std::ostream& os, const DataStruct& ds) {
+    std::ostream::sentry sentry(os);
+    if (!sentry) {
+        return os;
+    }
+    StreamGuard guard(os);
+
+    os << "(:key1 " <<
+    ds.key1 << ":key2 0" <<
+    std::oct << ds.key2 << ":key3 " <<
+    std::dec << ds.key3 << "\":" << ")";
+    return os;
 }
