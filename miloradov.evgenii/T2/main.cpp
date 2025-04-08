@@ -20,6 +20,7 @@ int main(){
 
     std::cout << std::endl;
 
+
     std::sort(datas.begin(), datas.end(), compareData);
     
     std::copy(
