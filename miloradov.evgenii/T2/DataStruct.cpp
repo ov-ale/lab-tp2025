@@ -115,7 +115,6 @@ std::istream& operator>>(std::istream& stream, StringIO stringIO) {
 
 std::istream &operator>>(std::istream &stream, Data &data) {
     
-    (void)data;
     std::istream::sentry sentry{stream};
     if (sentry) {
 		Data input{};
@@ -150,34 +149,17 @@ std::istream &operator>>(std::istream &stream, Data &data) {
 		    stream >> Separate{':'};
 		}
 		stream >> Separate{')'};
-
-		if (stream && key1 && key2 && key3) {
-		    data = input;
-		} else {
-			if (!stream) {
-        		std::cerr << "a" << std::endl;
-		    }
-		    if (!key1) {
-		        std::cerr << "b" << std::endl;
-		    }
-		    if (!key2) {
-		        std::cerr << "c" << std::endl;
-		    }
-		    if (!key3) {
-		        std::cerr << "d" << std::endl;
-		    }
-		    stream.setstate(std::ios::failbit);
-		}
-    }
-
     return stream;
+	}
 }
+
 
 std::ostream &operator<<(std::ostream &stream, const Data &data) {
     std::ostream::sentry sentry{stream};
     if (sentry) {
         StreamGuard streamGuard{stream};
-        stream << "(:key1 " << data.key1 << "d:key2 '" << data.key2 << "':key3 \"" << data.key3 << "\":)";
+        stream << "(:key1 " << data.key1 << "d:key2 '" << data.key2 
+        	<< "':key3 \"" << data.key3 << "\":)";
     }
     return stream;
 }
