@@ -170,8 +170,8 @@ std::ostream& operator<<(std::ostream& os, const DataStruct& ds) {
     StreamGuard guard(os);
 
     os << "(:key1 " <<
-    ds.key1 << ":key2 0" <<
-    std::oct << ds.key2 << ":key3 " <<
+    ds.key1 << "ull:key2 0" <<
+    std::oct << ds.key2 << ":key3 \"" <<
     std::dec << ds.key3 << "\":" << ")";
     return os;
 }
