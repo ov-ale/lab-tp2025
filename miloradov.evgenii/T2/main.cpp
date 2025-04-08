@@ -13,7 +13,7 @@ int main() {
         std::copy(
             std::istream_iterator<Data>{std::cin},
             std::istream_iterator<Data>{},
-            std::back_inserter(dataStructs)
+            std::back_inserter(datas)
         );
 
         if (!std::cin) {
