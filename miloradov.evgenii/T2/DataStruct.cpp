@@ -67,7 +67,7 @@ std::istream& operator>>(std::istream& stream, Data& data) {
     if (sentry) {
         Data input{};
         bool key1{}, key2{}, key3{};
-        
+
         stream >> Separate{'('};
         stream >> Separate{':'};
 
@@ -111,7 +111,7 @@ std::ostream& operator<<(std::ostream& stream, const Data& data) {
     std::ostream::sentry sentry{stream};
     if (sentry) {
         StreamGuard streamGuard{stream};
-        stream << "(:key1 " << data.key1 << "d:key2 '" 
+        stream << "(:key1 " << data.key1 << "d:key2 '"
                << data.key2 << "':key3 \"" << data.key3 << "\":)";
     }
     return stream;

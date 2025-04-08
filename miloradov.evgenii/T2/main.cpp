@@ -8,7 +8,7 @@ bool compareData(const Data& a, const Data& b);
 
 int main() {
     std::vector<Data> datas{};
-    
+
     std::copy(
         std::istream_iterator<Data>{std::cin},
         std::istream_iterator<Data>{},
@@ -16,7 +16,7 @@ int main() {
     );
 
     std::sort(datas.begin(), datas.end(), compareData);
-    
+
     std::copy(
         datas.begin(),
         datas.end(),
