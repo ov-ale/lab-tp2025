@@ -9,11 +9,18 @@ bool compareData(const Data& a, const Data& b);
 int main() {
     std::vector<Data> datas{};
 
-    std::copy(
-        std::istream_iterator<Data>{std::cin},
-        std::istream_iterator<Data>{},
-        std::back_inserter(datas)
-    );
+    while (!std::cin.eof()) {
+        std::copy(
+            std::istream_iterator<Data>{std::cin},
+            std::istream_iterator<Data>{},
+            std::back_inserter(dataStructs)
+        );
+
+        if (!std::cin) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+    }
 
     std::sort(datas.begin(), datas.end(), compareData);
 
