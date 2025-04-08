@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <iterator>
+#include <limits>
 #include "DataStruct.h"
 
 bool compareData(const Data& a, const Data& b);
