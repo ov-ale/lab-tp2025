@@ -181,4 +181,3 @@ std::ostream &operator<<(std::ostream &stream, const Data &data) {
     }
     return stream;
 }
-

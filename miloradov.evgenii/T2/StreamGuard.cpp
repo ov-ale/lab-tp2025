@@ -6,4 +6,3 @@ StreamGuard::StreamGuard(std::ios &stream): stream{stream}, flags{std::move(stre
 StreamGuard::~StreamGuard() {
 	stream.flags(this->flags);
 }
-
