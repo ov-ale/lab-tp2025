@@ -7,150 +7,112 @@
 #include <vector>
 
 struct Separate {
-  char expected{};
+    char expected{};
 };
 
-std::istream& operator>>(std::istream& stream, Separate&& separate) {
-  std::istream::sentry sentry{stream};
-  if (sentry) {
-    char expected{};
-    stream >> expected;
-    if (!stream || expected != separate.expected) {
-      stream.setstate(std::ios::failbit);
+std::istream& operator>>(std::istream& stream, const Separate&& separate) {
+    std::istream::sentry sentry{stream};
+    if (sentry) {
+        char expected{};
+        stream >> expected;
+        if (!stream || expected != separate.expected) {
+            stream.setstate(std::ios::failbit);
+        }
     }
-  }
-  return stream;
+    return stream;
 }
 
 struct SingleQuote {
-  char& value;
+    char& value;
 };
 
 std::istream& operator>>(std::istream& stream, SingleQuote&& sq) {
-  std::istream::sentry sentry{stream};
-  if (sentry) {
-    char quote;
-    stream >> quote;
-    if (!stream || quote != '\'') {
-      stream.setstate(std::ios::failbit);
-      return stream;
+    std::istream::sentry sentry{stream};
+    if (sentry) {
+        char quote;
+        stream >> quote;
+        if (!stream || quote != '\'') {
+            stream.setstate(std::ios::failbit);
+            return stream;
+        }
+        stream >> sq.value;
+        stream >> quote;
+        if (!stream || quote != '\'') {
+            stream.setstate(std::ios::failbit);
+        }
     }
-    
-    stream >> sq.value;
-    
-    stream >> quote;
-    if (!stream || quote != '\'') {
-      stream.setstate(std::ios::failbit);
-    }
-  }
-  return stream;
+    return stream;
 }
 
 struct DoubleQuote {
-  std::string& value;
+    std::string& value;
 };
 
 std::istream& operator>>(std::istream& stream, DoubleQuote&& dq) {
-  std::istream::sentry sentry{stream};
-  if (sentry) {
-    char quote;
-    stream >> quote;
-    if (!stream || quote != '"') {
-      stream.setstate(std::ios::failbit);
-      return stream;
+    std::istream::sentry sentry{stream};
+    if (sentry) {
+        char quote;
+        stream >> quote;
+        if (!stream || quote != '"') {
+            stream.setstate(std::ios::failbit);
+            return stream;
+        }
+        std::getline(stream, dq.value, '"');
     }
-    
-    std::getline(stream, dq.value, '"');
-  }
-  return stream;
-}
-
-struct DoubleLIT {
-  double& doubleLIT;
-};
-
-std::istream& operator>>(std::istream& stream, DoubleLIT&& doubleLIT) {
-  std::istream::sentry sentry{stream};
-  if (sentry) {
-    stream >> doubleLIT.doubleLIT >> Separate{'d'};
-  }
-  return stream;
-}
-
-struct CharLIT {
-  char& charLIT;
-};
-
-std::istream& operator>>(std::istream& stream, CharLIT&& charLIT) {
-  std::istream::sentry sentry{stream};
-  if (sentry) {
-    StreamGuard streamGuard{stream};
-    stream >> SingleQuote{charLIT.charLIT};
-  }
-  return stream;
-}
-
-struct StringIO {
-  std::string& stringIO;
-};
-
-std::istream& operator>>(std::istream& stream, StringIO stringIO) {
-  std::istream::sentry sentry{stream};
-  if (sentry) {
-    StreamGuard streamGuard{stream};
-    stream >> DoubleQuote{stringIO.stringIO};
-  }
-  return stream;
+    return stream;
 }
 
 std::istream& operator>>(std::istream& stream, Data& data) {
-  std::istream::sentry sentry{stream};
-  if (sentry) {
-    Data input{};
-    bool key1{}, key2{}, key3{};
-    
-    stream >> Separate{'('};
-    stream >> Separate{':'};
+    std::istream::sentry sentry{stream};
+    if (sentry) {
+        Data input{};
+        bool key1{}, key2{}, key3{};
+        
+        stream >> Separate{'('};
+        stream >> Separate{':'};
 
-    for (size_t i = 0; i < 3; ++i) {
-      std::string key{};
-      stream >> key;
-      if (!stream) {
-        return stream;
-      }
+        for (size_t i = 0; i < 3; ++i) {
+            std::string key{};
+            stream >> key;
+            if (!stream) {
+                return stream;
+            }
 
-      if (key == "key1") {
-        stream >> DoubleLIT{input.key1};
-        key1 = true;
-      } else if (key == "key2") {
-        stream >> CharLIT{input.key2};
-        key2 = true;
-      } else if (key == "key3") {
-        stream >> StringIO{input.key3};
-        key3 = true;
-      } else {
-        stream.setstate(std::ios::failbit);
-      }
+            if (key == "key1") {
+                stream >> input.key1 >> Separate{'d'};
+                key1 = true;
+            } else if (key == "key2") {
+                stream >> Separate{'\''} >> input.key2 >> Separate{'\''};
+                key2 = true;
+            } else if (key == "key3") {
+                stream >> Separate{'"'};
+                std::getline(stream, input.key3, '"');
+                key3 = true;
+            } else {
+                stream.setstate(std::ios::failbit);
+                return stream;
+            }
 
-      stream >> Separate{':'};
+            stream >> Separate{':'};
+        }
+
+        stream >> Separate{')'};
+
+        if (stream && key1 && key2 && key3) {
+            data = input;
+        } else {
+            stream.setstate(std::ios::failbit);
+        }
     }
-    stream >> Separate{')'};
-
-    if (stream && key1 && key2 && key3) {
-      data = input;
-    } else {
-      stream.setstate(std::ios::failbit);
-    }
-  }
-  return stream;
+    return stream;
 }
 
 std::ostream& operator<<(std::ostream& stream, const Data& data) {
-  std::ostream::sentry sentry{stream};
-  if (sentry) {
-    StreamGuard streamGuard{stream};
-    stream << "(:key1 " << data.key1 << "d:key2 '"
-           << data.key2 << "':key3 \"" << data.key3 << "\":)";
-  }
-  return stream;
+    std::ostream::sentry sentry{stream};
+    if (sentry) {
+        StreamGuard streamGuard{stream};
+        stream << "(:key1 " << data.key1 << "d:key2 '" 
+               << data.key2 << "':key3 \"" << data.key3 << "\":)";
+    }
+    return stream;
 }
