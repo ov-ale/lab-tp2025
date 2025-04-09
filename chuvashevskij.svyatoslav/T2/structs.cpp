@@ -37,7 +37,7 @@ namespace structs
             in.setstate(std::ios::failbit);
             return in;
         }
-        for (i; isdigit(i) || i == '.'; in >> i)
+        for (; isdigit(i) || i == '.'; in >> i)
         {
             strMantissa.push_back(i);
         }
@@ -115,7 +115,7 @@ namespace structs
         int order = 0;
         in >> Mantissa{ mantissa };
         in >> Order{ order };
-        dest.ref = mantissa * pow(10, order);
+        dest.ref = mantissa * std::pow(10, order);
         return in;
     }
 
@@ -178,7 +178,7 @@ namespace structs
         if (!in)
         {
             dest.isCorrect = false;
-            dest.key1 = 0,0;
+            dest.key1 = 0.0;
             dest.key2 = "0";
             dest.key3 = "";
             in.clear();
