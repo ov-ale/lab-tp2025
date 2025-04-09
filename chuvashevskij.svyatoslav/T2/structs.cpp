@@ -1,6 +1,7 @@
 #include "structs.h"
 #include "ScopeGuard.h"
 #include <limits>
+#include <cmath>
 
 namespace structs
 {
