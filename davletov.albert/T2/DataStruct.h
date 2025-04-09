@@ -32,7 +32,7 @@ namespace nspace {
         std::string exp;
     };
 
-    bool comparator(Data& first, Data& second);
+    bool comprarator(Data& first, Data& second);
 
     class iofmtguard {
         public:
