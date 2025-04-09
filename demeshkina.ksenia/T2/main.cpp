@@ -3,12 +3,14 @@
 #include <algorithm>
 #include <iterator>
 
-int main() {
+int main()
+{
     std::vector<DataStruct> data;
     std::cout << "Вводи данные (Ctrl+Z/Ctrl+D для завершения):\n";
-    
+
     DataStruct temp;
-    while (std::cin >> temp) { 
+    while (std::cin >> temp)
+    {
         data.push_back(temp);
     }
 
@@ -17,8 +19,7 @@ int main() {
     std::copy(
         std::istream_iterator<DataStruct>(std::cin),
         std::istream_iterator<DataStruct>(),
-        std::back_inserter(data)
-    );
+        std::back_inserter(data));
 
     std::sort(data.begin(), data.end(), compareDataStructs);
 
@@ -26,8 +27,7 @@ int main() {
     std::copy(
         data.begin(),
         data.end(),
-        std::ostream_iterator<DataStruct>(std::cout, "\n")
-    );
+        std::ostream_iterator<DataStruct>(std::cout, "\n"));
 
     return 0;
 }
