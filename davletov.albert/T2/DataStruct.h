@@ -32,21 +32,19 @@ namespace nspace {
         std::string exp;
     };
 
-    bool comparator(Data& first, Data& second);
+    bool comprarator(Data& first, Data& second);
 
-    class iofmtguard
-    {
-    public:
-        iofmtguard(std::basic_ios< char >& s);
-        ~iofmtguard();
-    private:
-        std::basic_ios< char >& s_;
-        std::streamsize width_;
-        char fill_;
-        std::streamsize precision_;
-        std::basic_ios< char >::fmtflags fmt_;
+    class iofmtguard {
+        public:
+            iofmtguard(std::basic_ios<char>& s);
+            ~iofmtguard();
+        private:
+            std::basic_ios<char>& s_;
+            std::streamsize width_;
+            char fill_;
+            std::streamsize precision_;
+            std::basic_ios<char>::fmtflags fmt_;
     };
-
 
     std::istream& operator>>(std::istream& in, DelimiterIO&& dest);
     std::istream& operator>>(std::istream& in, ULLLitIO&& dest);
@@ -55,5 +53,4 @@ namespace nspace {
     std::istream& operator>>(std::istream& in, LabelIO&& dest);
     std::istream& operator>>(std::istream& in, Data& dest);
     std::ostream& operator<<(std::ostream& out, const Data& dest);
-
 };
