@@ -2,49 +2,37 @@
 #include <vector>
 #include <iterator>
 #include <algorithm>
+#include <limits>
 
 #include "DataStruct.h"
 #include "StreamGuard.h"
 
 int main() {
     std::vector<Record> data;
-    while (!std::cin.eof()) {
-        std::copy(
-            std::istream_iterator<Record>{std::cin},
-            std::istream_iterator<Record>{},
-            std::back_inserter(data)
-        );
-        if (!std::cin) {
+    Record temp;
+
+    while (true) {
+        if (!(std::cin >> temp)) {
+            if (std::cin.eof()) {
+                break;
+            }
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            continue;
         }
+        data.push_back(temp);
     }
 
-    std::sort(
-        data.begin(),
-        data.end(),
-        [](Record data1, Record data2) {
-            if (data1.key1 < data2.key1) {
-                return true;
-            }
-            else if (data1.key1 > data2.key1) {
-                return false;
-            }
-            if (data1.key2 < data2.key2) {
-                return true;
-            }
-            else if (data1.key2 > data2.key2) {
-                return false;
-            }
-            return data1.key3.length() < data2.key3.length();
-        }
-    );
+    std::sort(data.begin(), data.end(),
+              [](const Record& lhs, const Record& rhs) {
+                  if (lhs.key1 != rhs.key1) return lhs.key1 < rhs.key1;
+                  if (lhs.key2 != rhs.key2) return lhs.key2 < rhs.key2;
+                  return lhs.key3.length() < rhs.key3.length();
+              });
 
-    std::copy(
-        data.begin(),
-        data.end(),
-        std::ostream_iterator<Record>{std::cout, "\n"}
-    );
+    for (std::size_t i = 0; i < data.size(); ++i) {
+        std::cout << data[i] << '\n';
+    }
 
-    return EXIT_SUCCESS;
+    return 0;
 }
