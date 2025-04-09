@@ -6,7 +6,6 @@
 int main()
 {
     std::vector<DataStruct> data;
-    std::cout << "Вводи данные (Ctrl+Z/Ctrl+D для завершения):\n";
 
     DataStruct temp;
     while (std::cin >> temp)
@@ -23,7 +22,6 @@ int main()
 
     std::sort(data.begin(), data.end(), compareDataStructs);
 
-    std::cout << "\nОтсортировано:\n";
     std::copy(
         data.begin(),
         data.end(),
