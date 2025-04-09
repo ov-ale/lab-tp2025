@@ -5,7 +5,7 @@ namespace nspace {
         char a;
         in >> a;
         if (a != dest.exp) {
-                in.setstate(std::ios::failbit);
+            in.setstate(std::ios::failbit);
         }
         return in;
     }
@@ -37,7 +37,8 @@ namespace nspace {
                 in.setstate(std::ios::failbit);
             }
             dest.ref = std::stoull(a.substr(2), nullptr, 16);
-        } catch (...) {
+        }
+        catch (...) {
             in.setstate(std::ios::failbit);
         }
         return in;
@@ -59,9 +60,10 @@ namespace nspace {
 
     std::istream& operator>>(std::istream& in, nspace::LabelIO&& dest) {
         std::string key;
-        if (in >> key && key == dest.exp) {
+        if (in >> key and key == dest.exp) {
             return in;
-        } else {
+        }
+        else {
             in.setstate(std::ios::failbit);
             return in;
         }
@@ -116,27 +118,26 @@ namespace nspace {
         }
         else if (first.key2 != second.key2) {
             return first.key2 < second.key2;
-        } else {
+        }
+        else {
             return first.key3.size() < second.key3.size();
         }
     }
 
-    iofmtguard::iofmtguard(std::basic_ios< char >& s) :
+    iofmtguard::iofmtguard(std::basic_ios<char>& s) :
         s_(s),
         width_(s.width()),
         fill_(s.fill()),
         precision_(s.precision()),
         fmt_(s.flags())
-  {}
+    {}
 
-    iofmtguard::~iofmtguard()
-    {
+    iofmtguard::~iofmtguard() {
         s_.width(width_);
         s_.fill(fill_);
         s_.precision(precision_);
         s_.flags(fmt_);
     }
-
 }
 
 int main() {
@@ -149,9 +150,7 @@ int main() {
             std::cin.ignore();
         }
     }
-
     std::sort(data.begin(), data.end(), nspace::comparator);
     std::copy(std::begin(data), std::end(data), std::ostream_iterator<Data>(std::cout, "\n"));
     return 0;
-
 }
