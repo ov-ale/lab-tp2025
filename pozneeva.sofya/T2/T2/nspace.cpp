@@ -5,25 +5,21 @@
 namespace nspace {
     std::istream& operator>>(std::istream& in, DelimiterIO&& dest) {
         std::istream::sentry sentry(in);
-        if (!sentry)
-        {
+        if (!sentry) {
             return in;
         }
         char c = '0';
         in >> c;
-        if (in && (c != dest.exp))
-        {
+        if (in && (c != dest.exp)) {
             in.setstate(std::ios::failbit);
         }
         return in;
     }
 
 
-    std::istream& operator>>(std::istream & in, DoubleIO && dest)
-    {
+    std::istream& operator>>(std::istream & in, DoubleIO && dest) {
         std::istream::sentry sentry(in);
-        if (!sentry)
-        {
+        if (!sentry) {
             return in;
         }
         char c = '0';
@@ -43,7 +39,7 @@ namespace nspace {
         char c = '0';
         while (in >> c) {
             suffix += toupper(c);
-        } 
+        }
         if (suffix != "ll") {
             return in;
         }
@@ -53,8 +49,7 @@ namespace nspace {
 
     std::istream& operator>>(std::istream& in, StringIO&& dest) {
         std::istream::sentry sentry(in);
-        if (!sentry)
-        {
+        if (!sentry) {
             return in;
         }
         return std::getline(in >> DelimiterIO{ '"' }, dest.ref, '"');
@@ -63,13 +58,11 @@ namespace nspace {
 
     std::istream& operator>>(std::istream& in, LabelIO&& dest) {
         std::istream::sentry sentry(in);
-        if (!sentry)
-        {
+        if (!sentry) {
             return in;
         }
         std::string data = "";
-        if ((in >> StringIO{ data }) && (data != dest.exp))
-        {
+        if ((in >> StringIO{ data }) && (data != dest.exp)) {
             in.setstate(std::ios::failbit);
         }
         return in;
@@ -78,8 +71,7 @@ namespace nspace {
 
     std::istream& operator>>(std::istream& in, Data& dest) {
         std::istream::sentry sentry(in);
-        if (!sentry)
-        {
+        if (!sentry) {
             return in;
         }
         Data input;
@@ -104,8 +96,7 @@ namespace nspace {
                 else { in >> label{ "key3" } >> sep{ ':' } >> str{ input.key3 }; }
             }
         }
-        if (in)
-        {
+        if (in) {
             dest = input;
         }
         return in;
@@ -114,8 +105,7 @@ namespace nspace {
 
     std::ostream& operator<<(std::ostream& out, const Data& dest) {
         std::ostream::sentry sentry(out);
-        if (!sentry)
-        {
+        if (!sentry) {
             return out;
         }
         iofmtguard fmtguard(out);
