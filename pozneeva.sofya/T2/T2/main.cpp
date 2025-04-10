@@ -13,7 +13,6 @@ int main() {
     std::vector< Data > data;
     std::istringstream iss;
     while (!std::cin.eof()) {
-        //std::istringstream iss("{ \"key1\": 1.0d, \"key2\": \"Let madness release you\" }");
         std::copy(
             std::istream_iterator< Data >(std::cin),
             std::istream_iterator< Data >(),
