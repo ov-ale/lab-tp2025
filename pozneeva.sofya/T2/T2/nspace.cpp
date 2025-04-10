@@ -4,7 +4,6 @@
 
 namespace nspace {
     std::istream& operator>>(std::istream& in, DelimiterIO&& dest) {
-        // âñå ïåðåãðóçêè îïåðàòîðîâ ââîäà/âûâîäà äîëæíû íà÷èíàòüñÿ ñ ïðîâåðêè ýêçåìïëÿðà êëàññà sentry
         std::istream::sentry sentry(in);
         if (!sentry)
         {
