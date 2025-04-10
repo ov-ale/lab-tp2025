@@ -1,0 +1,6 @@
+﻿  main.cpp
+  nspace.cpp
+  sort.h
+  Создание кода...
+sort.obj : error LNK2005: "void __cdecl sort(class std::vector<struct nspace::Data,class std::allocator<struct nspace::Data> > &)" (?sort@@YAXAEAV?$vector@UData@nspace@@V?$allocator@UData@nspace@@@std@@@std@@@Z) уже определен в main.obj
+D:\Git\work with Git\lab-tp2025\pozneeva.sofya\T2\x64\Debug\T2.exe : fatal error LNK1169: обнаружен многократно определенный символ - один или более
