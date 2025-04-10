@@ -6,7 +6,6 @@
 
 namespace nspace
 {
-    // формат ввода:
     // { "key1": 1.0d, "key2": -89LL, "key3": "Let madness release you" }
     struct Data {
         double key1 = 0.0;
@@ -34,7 +33,6 @@ namespace nspace
         std::string exp;
     };
 
-    // scope guard для возврата состояния потока в первоначальное состояние
     class iofmtguard {
     public:
         iofmtguard(std::basic_ios< char >& s):
