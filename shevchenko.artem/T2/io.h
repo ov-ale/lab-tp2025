@@ -1,7 +1,7 @@
 #ifndef IO_H
 #define IO_H
 
-#include "DataStruct.h"
+#include "dataStruct.h"
 #include <iostream>
 #include <string>
 #include <tuple>

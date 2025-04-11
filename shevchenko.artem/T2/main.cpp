@@ -1,4 +1,4 @@
-#include "DataStruct.h"
+#include "dataStruct.h"
 #include "io.h"
 #include "sort.h"
 #include <iostream>

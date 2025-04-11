@@ -1,7 +1,7 @@
 #ifndef SORT_H
 #define SORT_H
 
-#include "DataStruct.h"
+#include "dataStruct.h"
 #include <algorithm>
 #include <vector>
 
