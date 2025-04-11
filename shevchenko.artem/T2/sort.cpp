@@ -28,7 +28,7 @@ bool nspace::compare(const DataStruct left, const DataStruct right)
             }
         }
     }
-    
+
     return false;
 }
 

@@ -9,13 +9,13 @@
 namespace nspace
 {
     struct DelimiterIO // Для чтения разделителей
-    { 
-        char exp; 
+    {
+        char exp;
     };
 
     struct DBLLITIO // Для чтения типа Double (key 1)
-    { 
-        double& ref; 
+    {
+        double& ref;
     };
 
     // Для чтения рациональных чисел (key 2)
@@ -28,16 +28,16 @@ namespace nspace
     {
         unsigned long long& ref;
     };
-    
+
     struct StringIO // Для чтения строк (key 3)
     {
-        std::string& ref; 
+        std::string& ref;
     };
-    
+
     struct LabelIO // Для проверки меток
     {
         std::string exp;
-    }; 
+    };
 
 
     std::istream& operator>>(std::istream& in, DelimiterIO&& dest);        // Оператор ввода для DelimiterIO

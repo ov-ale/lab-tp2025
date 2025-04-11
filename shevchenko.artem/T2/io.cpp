@@ -7,7 +7,7 @@ namespace nspace
     std::istream& operator>>(std::istream& in, DelimiterIO&& dest)
     {
         // Проверка состояния потока
-        std::istream::sentry sentry(in); 
+        std::istream::sentry sentry(in);
         if (!sentry) return in;
 
         // Получение символа из потока
@@ -17,15 +17,15 @@ namespace nspace
         // Проверка символа
         if (c != dest.exp)
         {
-            in.setstate(std::ios::failbit); 
-        } 
+            in.setstate(std::ios::failbit);
+        }
         return in;
     }
 
-    std::istream& operator>>(std::istream& in, DBLLITIO&& dest) 
-    {   
+    std::istream& operator>>(std::istream& in, DBLLITIO&& dest)
+    {
         // Проверка состояния потока
-        std::istream::sentry sentry(in); 
+        std::istream::sentry sentry(in);
         if (!sentry) return in;
 
         // Пытаемся считать число
@@ -34,7 +34,7 @@ namespace nspace
         // Проверяем суффикс
 
         const int nextChar = in.peek();
-        if (nextChar == 'd') 
+        if (nextChar == 'd')
         {
             in >> DelimiterIO{'d'};
         }
@@ -53,7 +53,7 @@ namespace nspace
     std::istream& operator>>(std::istream &in, LLIO&& dest)
     {
         // Проверка состояния потока
-        std::istream::sentry sentry(in); 
+        std::istream::sentry sentry(in);
         if (!sentry) return in;
 
         // Читает long long и проверяет префикс
@@ -63,7 +63,7 @@ namespace nspace
     std::istream& operator>>(std::istream &in, ULLIO&& dest)
     {
         // Проверка состояния потока
-        std::istream::sentry sentry(in); 
+        std::istream::sentry sentry(in);
         if (!sentry) return in;
 
         // Читает unsigned long long и проверяет префикс
@@ -73,7 +73,7 @@ namespace nspace
     std::istream &operator>>(std::istream &in, StringIO&& dest)
     {
         // Проверка состояния потока
-        std::istream::sentry sentry(in); 
+        std::istream::sentry sentry(in);
         if (!sentry) return in;
 
         // Читает строку между кавычками
@@ -83,12 +83,12 @@ namespace nspace
     std::istream &operator>>(std::istream &in, DataStruct& dest)
     {
         // Проверка состояния потока
-        std::istream::sentry sentry(in); 
+        std::istream::sentry sentry(in);
         if (!sentry) return in;
 
         // Создаём временую структуру данных
         DataStruct tempData;
-        
+
         bool isKey1Added = false;
         bool isKey2Added = false;
         bool isKey3Added = false;
@@ -100,9 +100,9 @@ namespace nspace
         while (!(isKey1Added && isKey2Added && isKey3Added))
         {
             std::string currentKey;
-            
+
             in >> DelimiterIO{':'} >> currentKey;
-            if (!in) 
+            if (!in)
             {
                 break;
             }
@@ -145,14 +145,14 @@ namespace nspace
     std::ostream &operator<<(std::ostream &out, const DataStruct &dest)
     {
         // Проверка состояния потока
-        std::ostream::sentry sentry(out); 
+        std::ostream::sentry sentry(out);
         if (!sentry) return out;
 
         // Блокируем поток
         iofmtguard guard(out);
 
         // Выводим данные в поток
-        out << "(:key1 "; 
+        out << "(:key1 ";
         out << std::setprecision(1) << std::fixed << dest.key1 << "d";
         out << ":key2 ";
         out << "(:N " << dest.key2.first << ":D " << dest.key2.second << ":)";

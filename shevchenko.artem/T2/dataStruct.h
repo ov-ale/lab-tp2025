@@ -5,7 +5,7 @@
 #include <string>
 #include <tuple>
 
-namespace nspace 
+namespace nspace
 {
     struct DataStruct
     {
@@ -13,6 +13,6 @@ namespace nspace
         std::pair<long long, unsigned long long> key2;
         std::string key3;
     };
-}    
+}
 
 #endif

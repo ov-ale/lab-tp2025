@@ -11,9 +11,9 @@ int main()
     using nspace::DataStruct;
 
     std::vector<DataStruct> data;
-    while (!std::cin.eof()) 
+    while (!std::cin.eof())
     {
-        if (!std::cin) 
+        if (!std::cin)
         {
             std::cin.clear();
         }
@@ -25,5 +25,5 @@ int main()
 
     std::copy(std::begin(data), std::end(data), std::ostream_iterator<DataStruct>(std::cout, "\n"));
 
-    
+
 }
