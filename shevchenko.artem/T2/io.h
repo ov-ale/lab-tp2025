@@ -40,13 +40,13 @@ namespace nspace
     };
 
 
-    std::istream& operator>>(std::istream& in, DelimiterIO&& dest);        // Оператор ввода для DelimiterIO
-    std::istream& operator>>(std::istream& in, DBLLITIO&& dest);           // Оператор ввода для DBL LIT
-    std::istream& operator>>(std::istream& in, LLIO&& dest);               // Оператор ввода для Long Long
-    std::istream& operator>>(std::istream& in, ULLIO&& dest);              // Оператор ввода для Unsigned Long Long
-    std::istream& operator>>(std::istream& in, StringIO&& dest);           // Оператор ввода для string
-    std::istream& operator>>(std::istream& in, DataStruct& dest);         // Оператор ввода для DataStruct
-    std::ostream& operator<<(std::ostream& out, const DataStruct& dest);   // Оператор для вывода DataStruct
+    std::istream& operator>>(std::istream& in, DelimiterIO&& dest); // Оператор ввода для Delimiter
+    std::istream& operator>>(std::istream& in, DBLLITIO&& dest); // Оператор ввода для DBLLIT
+    std::istream& operator>>(std::istream& in, LLIO&& dest); // Оператор ввода для LL
+    std::istream& operator>>(std::istream& in, ULLIO&& dest); // Оператор ввода для ULL
+    std::istream& operator>>(std::istream& in, StringIO&& dest); // Оператор ввода для str
+    std::istream& operator>>(std::istream& in, DataStruct& dest); // Оператор ввода для DataStruct
+    std::ostream& operator<<(std::ostream& out, const DataStruct& dest); //Оператор для вывода
 }
 
 #endif
