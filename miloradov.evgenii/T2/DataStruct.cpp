@@ -15,11 +15,11 @@ struct Separate {
 std::istream &operator>>(std::istream &stream, const Separate &&separate) {
     std::istream::sentry sentry{stream};
     if (sentry) {
-		char expected{};
-		stream >> expected;
-		if (!stream || expected != separate.expected) {
-	    	stream.setstate(std::ios::failbit);
-		}
+        char expected{};
+        stream >> expected;
+        if (!stream || expected != separate.expected) {
+            stream.setstate(std::ios::failbit);
+        }
     }
 
     return stream;
@@ -76,7 +76,7 @@ struct DoubleLIT {
 std::istream &operator>>(std::istream &stream, const DoubleLIT &doubleLIT) {
     std::istream::sentry sentry{stream};
     if (sentry) {
-		stream >> doubleLIT.doubleLIT >> Separate{'d'};
+        stream >> doubleLIT.doubleLIT >> Separate{'d'};
     }
 
     return stream;
@@ -89,8 +89,8 @@ struct CharLIT {
 std::istream &operator>>(std::istream &stream, const CharLIT &charLIT) {
     std::istream::sentry sentry{stream};
     if (sentry) {
-		StreamGuard streamGuard{stream};
-		stream >> SingleQuote{charLIT.charLIT};
+        StreamGuard streamGuard{stream};
+        stream >> SingleQuote{charLIT.charLIT};
     }
 
     return stream;
@@ -106,8 +106,8 @@ struct StringIO {
 std::istream& operator>>(std::istream& stream, StringIO stringIO) {
     std::istream::sentry sentry{stream};
     if (sentry) {
-		StreamGuard streamGuard{stream};
-		stream >> DoubleQuote{stringIO.stringIO};
+        StreamGuard streamGuard{stream};
+        stream >> DoubleQuote{stringIO.stringIO};
     }
 
     return stream;
@@ -117,47 +117,47 @@ std::istream& operator>>(std::istream& stream, StringIO stringIO) {
 std::istream &operator>>(std::istream &stream, Data &data) {
     std::istream::sentry sentry{stream};
     if (sentry) {
-		Data input{};
-		bool key1{};
+        Data input{};
+        bool key1{};
         bool key2{};
         bool key3{};
 
-		stream >> Separate{'('};
-		stream >> Separate{':'};
+        stream >> Separate{'('};
+        stream >> Separate{':'};
 
-		for (size_t i = 0; i < 3; ++i) {
-		    std::string key{};
-		    stream >> key;
-		    if (!stream) {
-				return stream;
-		    }
+        for (size_t i = 0; i < 3; ++i) {
+            std::string key{};
+            stream >> key;
+            if (!stream) {
+                return stream;
+            }
 
-		    if (key == "key1") {
-				stream >> DoubleLIT{input.key1};
-				key1 = true;
+            if (key == "key1") {
+                stream >> DoubleLIT{input.key1};
+                key1 = true;
 
 
-		    } else if (key == "key2") {
-				stream >> CharLIT{input.key2};
-				key2 = true;
+            } else if (key == "key2") {
+                stream >> CharLIT{input.key2};
+                key2 = true;
 
-			} else if (key == "key3") {
-				stream >> StringIO{input.key3};
-				key3 = true;
+            } else if (key == "key3") {
+                stream >> StringIO{input.key3};
+                key3 = true;
 
-		    } else {
-				stream.setstate(std::ios::failbit);
-		    }
+            } else {
+                stream.setstate(std::ios::failbit);
+            }
 
-		    stream >> Separate{':'};
-		}
-		stream >> Separate{')'};
+            stream >> Separate{':'};
+        }
+        stream >> Separate{')'};
 
-		if (key1 && key2 && key3) {
-	    	data = input;
-		} else {
-	    	stream.setstate(std::ios::failbit);
-		}
+        if (key1 && key2 && key3) {
+            data = input;
+        } else {
+            stream.setstate(std::ios::failbit);
+        }
     }
 
     return stream;
