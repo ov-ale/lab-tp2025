@@ -22,6 +22,7 @@ int main() {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
+    
 
     std::sort(datas.begin(), datas.end(), compareData);
 
