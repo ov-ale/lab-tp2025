@@ -1,7 +1,8 @@
 #include <iostream>
 
 int main(){
-    std::cout << "zabolotskiy.vlad" << std::endl;
+    std::cout << "astafyeva.daria" << std::endl;
     return 0;
 }
+
 
