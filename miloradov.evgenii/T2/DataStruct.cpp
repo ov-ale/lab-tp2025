@@ -38,9 +38,9 @@ std::istream& operator>>(std::istream& stream, SingleQuote&& sq) {
             stream.setstate(std::ios::failbit);
             return stream;
         }
-        
+
         stream >> sq.value;
-        
+
         stream >> quote;
         if (!stream || quote != '\'') {
             stream.setstate(std::ios::failbit);
@@ -62,7 +62,7 @@ std::istream& operator>>(std::istream& stream, DoubleQuote&& dq) {
             stream.setstate(std::ios::failbit);
             return stream;
         }
-        
+
         std::getline(stream, dq.value, '"');
     }
     return stream;
@@ -121,7 +121,7 @@ std::istream &operator>>(std::istream &stream, Data &data) {
 		bool key1{};
         bool key2{};
         bool key3{};
-		
+
 		stream >> Separate{'('};
 		stream >> Separate{':'};
 
@@ -152,14 +152,14 @@ std::istream &operator>>(std::istream &stream, Data &data) {
 		    stream >> Separate{':'};
 		}
 		stream >> Separate{')'};
-		
+
 		if (key1 && key2 && key3) {
 	    	data = input;
 		} else {
 	    	stream.setstate(std::ios::failbit);
 		}
     }
-   
+
     return stream;
 }
 
@@ -168,20 +168,18 @@ std::ostream &operator<<(std::ostream &stream, const Data &data) {
     if (sentry) {
         StreamGuard streamGuard{stream};
         if (data.key1 == 0.0){
-            stream << "(:key1 0.0" 
+            stream << "(:key1 0.0"
             << "d:key2 '" << data.key2 << "':key3 \"" << data.key3 << "\":)";
         }
         else if (data.key1 == 1.0) {
-            stream << "(:key1 1.0" 
+            stream << "(:key1 1.0"
             << "d:key2 '" << data.key2 << "':key3 \"" << data.key3 << "\":)";
         }
         else{
-            stream << "(:key1 " 
-            << std::fixed << std::setprecision(1) 
+            stream << "(:key1 "
+            << std::fixed << std::setprecision(1)
             << data.key1 << "d:key2 '" << data.key2 << "':key3 \"" << data.key3 << "\":)";
         }
     }
     return stream;
 }
-
-
