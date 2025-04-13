@@ -2,6 +2,32 @@
 #include <sstream>
 #include <cctype>
 #include <cmath>
+#include <vector>
+
+std::vector<std::string> splitKeyValueParts(const std::string &line) {
+    std::vector<std::string> parts;
+    std::string current;
+    bool inQuotes = false;
+
+    for (char c : line) {
+        if (c == '"') {
+            inQuotes = !inQuotes;
+        }
+
+        if (c == ':' && !inQuotes) {
+            parts.push_back(current);
+            current.clear();
+        } else {
+            current += c;
+        }
+    }
+
+    if (!current.empty()) {
+        parts.push_back(current);
+    }
+
+    return parts;
+}
 
 bool parseDoubleLiteral(const std::string &s, double &value)
 {
@@ -63,9 +89,7 @@ std::istream &operator>>(std::istream &in, DataStruct &ds)
 {
     std::string line;
     if (!std::getline(in, line))
-    {
         return in;
-    }
 
     line.erase(0, line.find_first_not_of(" \t"));
     line.erase(line.find_last_not_of(" \t") + 1);
@@ -78,12 +102,11 @@ std::istream &operator>>(std::istream &in, DataStruct &ds)
 
     line = line.substr(2, line.size() - 4);
 
-    std::istringstream iss(line);
-    std::string part;
     DataStruct temp;
     bool hasKey1 = false, hasKey2 = false, hasKey3 = false;
 
-    while (std::getline(iss, part, ':'))
+    std::vector<std::string> parts = splitKeyValueParts(line);
+    for (const auto &part : parts)
     {
         std::istringstream partStream(part);
         std::string key;
