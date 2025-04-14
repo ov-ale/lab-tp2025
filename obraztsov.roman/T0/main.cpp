@@ -1,5 +1,6 @@
 #include <iostream>
 
 int main() {
-	std::cout << "ivanov.ivan";
+	std::cout << "obraztsov.roman" << std::endl;
+	return 0;
 }
