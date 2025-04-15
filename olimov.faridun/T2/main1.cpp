@@ -1,46 +1,30 @@
-﻿#include <algorithm>
-#include <iostream>
-#include <iterator>
-#include <limits>
+﻿#include <iostream>
 #include <vector>
-
+#include <iterator>
+#include <algorithm>
+#include <limits>
 #include "dataStruct.h"
+#include "streamGuard.h"
 
 int main() {
     std::vector<DataStruct> data;
+    std::string line;
 
-    while (!std::cin.eof()) {
-        std::copy(
-            std::istream_iterator<DataStruct>{std::cin},
-            std::istream_iterator<DataStruct>{},
-            std::back_inserter(data)
-        );
+    while (std::getline(std::cin, line)) {
+        if (line.empty()) continue;
 
-        if (!std::cin) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::istringstream iss(line);
+        DataStruct temp;
+        if (iss >> temp) {
+            data.push_back(temp);
         }
     }
 
-    std::sort(data.begin(), data.end(), [](const DataStruct& a, const DataStruct& b) {
-        if (a.key1 != b.key1) {
-            return a.key1 < b.key1;
-        }
+    std::sort(data.begin(), data.end(), compareData);
 
-        const double aMagnitude = std::abs(a.key2);
-        const double bMagnitude = std::abs(b.key2);
-        if (aMagnitude != bMagnitude) {
-            return aMagnitude < bMagnitude;
-        }
-
-        return a.key3.length() < b.key3.length();
-        });
-
-    std::copy(
-        data.begin(),
-        data.end(),
-        std::ostream_iterator<DataStruct>{std::cout, "\n"}
-    );
+    StreamGuard guard(std::cout);
+    std::copy(data.begin(), data.end(),
+        std::ostream_iterator<DataStruct>(std::cout, "\n"));
 
     return 0;
 }

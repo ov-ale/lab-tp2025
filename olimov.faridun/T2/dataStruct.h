@@ -1,9 +1,14 @@
-#ifndef DATASTRUCTH
-#define DATASTRUCTH
+#ifndef DATASTRUCT_H
+#define DATASTRUCT_H
 
-#include <complex>
-#include <iosfwd>
 #include <string>
+#include <complex>
+#include <vector>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <iterator>
+#include <algorithm>
 
 struct DataStruct {
     unsigned long long key1;
@@ -11,7 +16,14 @@ struct DataStruct {
     std::string key3;
 };
 
-std::ostream& operator<<(std::ostream& out, const DataStruct& data);
+unsigned long long parseOctal(const std::string& str);
+
+std::complex<double> parseComplex(const std::string& str);
+
 std::istream& operator>>(std::istream& in, DataStruct& data);
+
+std::ostream& operator<<(std::ostream& out, const DataStruct& data);
+
+bool compareData(const DataStruct& lhs, const DataStruct& rhs);
 
 #endif

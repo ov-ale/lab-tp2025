@@ -1,114 +1,65 @@
 #include "dataStruct.h"
 #include "streamGuard.h"
+#include <stdexcept>
 
-#include <iomanip>
-#include <iostream>
-#include <limits>
-#include <sstream>
-
-namespace {
-    struct Delimiter {
-        char expected;
-    };
-
-    std::istream& operator>>(std::istream& in, Delimiter&& delimiter) {
-        std::istream::sentry sentry(in);
-        if (sentry) {
-            char actual;
-            if (in >> actual && actual != delimiter.expected) {
-                in.setstate(std::ios::failbit);
-            }
-        }
-        return in;
+unsigned long long parseOctal(const std::string& str) {
+    unsigned long long value = 0;
+    std::istringstream iss(str);
+    if (!(iss >> std::oct >> value) || !iss.eof()) {
+        throw std::invalid_argument("Invalid octal number");
     }
+    return value;
+}
 
-    struct ComplexNumber {
-        std::complex<double>& value;
-    };
-
-    std::istream& operator>>(std::istream& in, ComplexNumber&& complex) {
-        std::istream::sentry sentry(in);
-        if (sentry) {
-            double real, imag;
-            in >> Delimiter{ '#' } >> Delimiter{ 'c' } >> Delimiter{ '(' }
-            >> real >> Delimiter{ ' ' } >> imag >> Delimiter{ ')' };
-            if (in) {
-                complex.value = std::complex<double>(real, imag);
-            }
-        }
-        return in;
+std::complex<double> parseComplex(const std::string& str) {
+    double real = 0.0, imag = 0.0;
+    std::istringstream iss(str);
+    if (!(iss >> real >> imag) || !iss.eof()) {
+        throw std::invalid_argument("Invalid complex number");
     }
-
-    struct OctalULL {
-        unsigned long long& value;
-    };
-
-    std::istream& operator>>(std::istream& in, OctalULL&& octal) {
-        std::istream::sentry sentry(in);
-        if (sentry) {
-            in >> std::oct >> octal.value;
-            if (in) {
-                in >> Delimiter{ ':' };
-            }
-        }
-        return in;
-    }
-
-    struct StringValue {
-        std::string& value;
-    };
-
-    std::istream& operator>>(std::istream& in, StringValue&& str) {
-        std::istream::sentry sentry(in);
-        if (sentry) {
-            std::getline(in >> Delimiter{ '"' }, str.value, '"');
-        }
-        return in;
-    }
+    return { real, imag };
 }
 
 std::istream& operator>>(std::istream& in, DataStruct& data) {
-    std::istream::sentry sentry(in);
-    if (!sentry) {
+    std::string line;
+    if (!std::getline(in, line) || line.empty()) {
+        in.setstate(std::ios::failbit);
         return in;
     }
 
-    DataStruct temp;
-    bool hasKey1 = false;
-    bool hasKey2 = false;
-    bool hasKey3 = false;
+    try {
+        size_t k1 = line.find(":key1");
+        size_t k2 = line.find(":key2");
+        size_t k3 = line.find(":key3");
 
-    in >> Delimiter{ '(' } >> Delimiter{ ':' };
-
-    for (int i = 0; i < 3; ++i) {
-        std::string key;
-        in >> key;
-
-        if (key == "key1") {
-            in >> OctalULL{ temp.key1 };
-            hasKey1 = true;
-        }
-        else if (key == "key2") {
-            in >> ComplexNumber{ temp.key2 };
-            hasKey2 = true;
-        }
-        else if (key == "key3") {
-            in >> StringValue{ temp.key3 };
-            hasKey3 = true;
-        }
-        else {
-            in.setstate(std::ios::failbit);
+        if (k1 == std::string::npos || k2 == std::string::npos || k3 == std::string::npos) {
+            throw std::invalid_argument("Missing key marker");
         }
 
-        in >> Delimiter{ ':' };
+        size_t start = line.find(" ", k1) + 1;
+        size_t end = line.find(":", start);
+        if (start == std::string::npos + 1 || end == std::string::npos) {
+            throw std::invalid_argument("Invalid key1 format");
+        }
+        std::string key1_str = line.substr(start, end - start);
+        data.key1 = parseOctal(key1_str);
+
+        start = line.find("#c(", k2) + 3;
+        end = line.find(")", start);
+        if (start == std::string::npos + 3 || end == std::string::npos) {
+            throw std::invalid_argument("Invalid key2 format");
+        }
+        std::string complexStr = line.substr(start, end - start);
+        data.key2 = parseComplex(complexStr);
+
+        start = line.find("\"", k3) + 1;
+        end = line.find("\"", start);
+        if (start == std::string::npos + 1 || end == std::string::npos) {
+            throw std::invalid_argument("Invalid key3 format");
+        }
+        data.key3 = line.substr(start, end - start);
     }
-
-    in >> Delimiter{ ')' };
-
-    if (hasKey1 && hasKey2 && hasKey3) {
-        data = temp;
-    }
-    else {
+    catch (...) {
         in.setstate(std::ios::failbit);
     }
 
@@ -116,17 +67,18 @@ std::istream& operator>>(std::istream& in, DataStruct& data) {
 }
 
 std::ostream& operator<<(std::ostream& out, const DataStruct& data) {
-    std::ostream::sentry sentry(out);
-    if (!sentry) {
-        return out;
-    }
-
     StreamGuard guard(out);
-    out << std::fixed << std::setprecision(1);
-
-    out << "(:key1 0" << std::oct << data.key1 << ":key2 #c("
-        << data.key2.real() << " " << data.key2.imag() << "):key3 \""
-        << data.key3 << "\":)";
-
+    out << "(:key1 0" << std::oct << data.key1
+        << ":key2 #c(" << std::fixed << std::setprecision(1)
+        << data.key2.real() << " " << data.key2.imag()
+        << "):key3 \"" << data.key3 << "\":)";
     return out;
+}
+
+bool compareData(const DataStruct& lhs, const DataStruct& rhs) {
+    if (lhs.key1 != rhs.key1)
+        return lhs.key1 < rhs.key1;
+    if (std::norm(lhs.key2) != std::norm(rhs.key2))
+        return std::norm(lhs.key2) < std::norm(rhs.key2);
+    return lhs.key3.length() < rhs.key3.length();
 }
