@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+
 namespace nspace
 {
     class iofmtguard

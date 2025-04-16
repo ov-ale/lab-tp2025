@@ -6,6 +6,7 @@
 #include <string>
 #include <tuple>
 
+
 namespace nspace
 {
     struct DelimiterIO // Для чтения разделителей

@@ -2,6 +2,7 @@
 #include "guard.h"
 #include <iomanip>
 
+
 namespace nspace
 {
     std::istream& operator>>(std::istream& in, DelimiterIO&& dest)

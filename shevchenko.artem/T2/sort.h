@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <vector>
 
+
 namespace nspace
 {
     bool compare(const DataStruct left, const DataStruct right);
