@@ -1,7 +1,7 @@
 #include <iostream>
 
 int main() {
-    std::cout << "usachev.Timur" << std::endl;
+    std::cout << "Usachev.Timur" << std::endl;
 
     return 0;
 }
