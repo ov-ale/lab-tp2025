@@ -11,7 +11,7 @@ int main() {
             std::back_inserter(dataVec));
 
     std::sort(dataVec.begin(), dataVec.end(), compareData);
-    
+
     std::copy(dataVec.begin(), dataVec.end(),
             std::ostream_iterator<DataStruct>(std::cout, "\n"));
 
